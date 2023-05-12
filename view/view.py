@@ -222,3 +222,13 @@ if __name__=='__main__':
         exit()
         clear_console()
 
+# Back to main menu
+def back():
+        menu_actions['print_main_menu']()
+
+# Exit program
+def exit():
+        sys.exit()
+        
+def clear_console():
+        print("\n" * 3)
