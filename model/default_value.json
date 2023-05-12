@@ -19,9 +19,9 @@
                   "price_float": 5000.00,
                   "product_per_one_float": 1.9},
 
-          "user_resurce": {"food_int": 2500,
-                           "villager_int": 1000,
-                           "gold_float": 20000.00},
+          "user_resurce": {"food_int":1700,
+                           "villager_int": 750,
+                           "gold_float": 1500.00},
 
           "year": {"count_int": 1,
                    "calendar_year_int": 1388,

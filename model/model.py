@@ -1,13 +1,8 @@
-import json
+from model.get_function import *
+from model.calculation_function import *
+from model.update_function import *
+from view.view import *
 
-#Загружаем файл с дефлотным значением переменных
-file_name = 'dark_imperor_md/model/default_value.json'
-
-with open(file_name, 'r') as json_file:
-    default_value=json.load(json_file)
-
-#default start value
-value = default_value
 
 
 
@@ -62,5 +57,16 @@ def building(build_name):
                         print("Invalid selection, please try again.\n")
                         print_build_menu()  
 
-
+# =======================
+#      WARNINGS
+# =======================
+# функция выводит уведомления о разных событиях
+def warning_information(res_name):
+        if res_name == 'gold':
+                clear_console()#очистка консоли
+                
+                print(f'Need more gold!')
+                input('Press Enter')                
+        else:
+                pass
 

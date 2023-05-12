@@ -9,7 +9,7 @@
 # если type_operation=0, то qty_gold будет списано
 # если type_operation=1, то qty_gold будет начислено
 def upd_gold_player(qty_gold,type_operation):
-    if type_operation = 0:
+    if type_operation == 0:
         value['user_resurce']['gold_float'] =\
             get_current_qty_gold() - qty_gold
     else:

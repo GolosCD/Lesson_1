@@ -1,4 +1,5 @@
 import random
+from model.get_function import *
 # =======================
 #      CALCULATION FUNCTIONS 
 # (функции расчитывают данные но не меняют)
@@ -9,7 +10,7 @@ import random
 # в функцию передается название здания и кол-во
 # функция возвращает сумму за запрощенные постройки
 def calc_cost_build(build_name, qty):
-        return float(qty) * value.get(build_name).get('price_float')
+        return float(qty) * get_current_price_build(build_name)
 
 # ----------calc_harvest_ratio-----------------------------------------
 # функция расчитывает коэффициент урожайности для каждого года
