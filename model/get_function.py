@@ -3,6 +3,7 @@ import json
 #Загружаем файл с дефлотным значением переменных
 #file_name = 'C:\\Users\\AnanevSYU\\Documents\\01. Совещания\\2023-01-18 - Learn\\04. Python\\01.Project\\dark_imperor_md\model\\default_value.json'
 file_name ='dark_emperor_md/model/default_value.json'
+
 with open(file_name, 'r') as json_file:
     default_value=json.load(json_file)
 

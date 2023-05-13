@@ -1,3 +1,6 @@
+from model.get_function import *
+
+
 # =======================
 #      UPDATE FUNCTIONS 
 # (функции обновления игровых данных)
@@ -8,6 +11,7 @@
 # функция принимает кол-во золота и тип операции
 # если type_operation=0, то qty_gold будет списано
 # если type_operation=1, то qty_gold будет начислено
+from model.get_function import *
 def upd_gold_player(qty_gold,type_operation):
     if type_operation == 0:
         value['user_resurce']['gold_float'] =\
