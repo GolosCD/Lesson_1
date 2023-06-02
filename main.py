@@ -3,92 +3,16 @@
 import sys
 import os
 import random
+from points import *
 
 # Main definition - constants
-menu_actions = {}
-
-#default start value
-value = {'farm': {'count_int': 1,
-                  'price_float': 1000.00,
-                  'product_per_one_float': 500
-                  },
-
-         'market': {'count_int': 1,
-                  'price_float': 2000.00,
-                  'product_per_one_float': 1.5},
-
-         'mine': {'count_int': 1,
-                  'price_float': 3000.00,
-                  'product_per_one_float': 1.9},
-
-         'blacksmith': {'count_int': 1,
-                        'price_float': 3000.00,
-                        'product_per_one_float': 1.9},
-
-         'castl': {'count_int': 1,
-                  'price_float': 5000.00,
-                  'product_per_one_float': 1.9},
-
-          'user_resurce': {'food_int': 1700,
-                           'villager_int': 750,
-                           'gold_float': 1500.00},
-
-          'year': {'count_int': 1,
-                   'calendar_year_int': 1388,
-                   'harvest_ratio_float': 0.78,
-                   'year_price_food_float':85.0},
-          
-          'price':{'food_float': 85.0}
-
-         }
-
-
-
-
-main_menu = {
-    1: 'Следующий год',
-    2: 'Строить',
-    3: 'Торговля',
-    4: 'Армия',
-    5: 'Пища',
-    6: 'Налоги',
-    7: 'Консультант',
-    8: 'Отчет',
-    9: 'Игра'
-}
-
-build_menu = {
-    1: 'Ферма',
-    2: 'Рынок',
-    3: 'Шахты',
-    4: 'Кузница',
-    5: 'Замок',
-    0: 'Назад'
-}
-
-operation_name = { # словарь для перевода значений введных пользователем в текст
-    '1': 'farm',
-    '2': 'market',
-    '3': 'mine',
-    '4': 'blacksmith',
-    '5': 'castl',
-}
-
-farm_menu = {
- 1: 'Построить ферму',
- 0: 'Назад'
-}
-
-market_menu = {
- 1: 'Построить рынок',
- 0: 'Назад'
-}
+menu_actions:dict = dict()
 
 # =======================
 #      WARNINGS
 # =======================
 # функция выводит уведомления о разных событиях
-def warning_information(res_name):
+def warning_information(res_name:str):
         if res_name == 'gold':
                 clear_console()#очистка консоли
                 
@@ -141,16 +65,24 @@ def input_validate(val):
 # функция расчета затрат на постройку введенных зданий
 # в функцию передается название здания и кол-во
 # функция возвращает сумму за запрощенные постройки
-def calc_param_build(build_name, qty):
+def calc_cost_build(build_name:str, qty:int):
         return float(qty) * value.get(build_name).get('price_float')
 
 # ----------calc_cost_build--------------------------------------------
 # функция списания денежных средств со счета
 # в функцию передается сумма для списания
 # функция отнимает сумму списания от суммы на балансе игрока
-def calc_cost_build(price):
+def write_off_player_gold(price:float):
         value['user_resurce']['gold_float'] =\
             get_current_qty_gold() - price
+            
+# ----------calc_cost_build--------------------------------------------
+# функция списания денежных средств со счета
+# в функцию передается сумма для списания
+# функция отнимает сумму списания от суммы на балансе игрока
+def add_gold(gold:float):
+        value['user_resurce']['gold_float'] =\
+            get_current_qty_gold() + gold            
 
 # ----------get_current_qty_build--------------------------------------
 # функция показа текущего значения кол-ва зданий выбранного типа
@@ -230,7 +162,7 @@ def building(build_name):
         print()
 
         # стоимость за постройку указанных зданий сохраняем в переменной
-        build_count_price_float = calc_param_build(
+        build_count_price_float = calc_cost_build(
             build_name, build_count_int)
         
         # проверяем есть ли на балансе нужная сумма, если есть...
@@ -240,7 +172,7 @@ def building(build_name):
                 chang_count_build(build_name, build_count_int,'+')
                 
                 # списываем затраты на постройку с баланса игрока
-                calc_cost_build(build_count_price_float)
+                write_off_player_gold(build_count_price_float)
 
                 # выводим сообщение об успешности, обновленное кол-во выбранных зданий
                 # выводим сообщение о потраченном золоте
@@ -271,11 +203,36 @@ def calc_end_year():
         # расчет рандомного коэффициента урожайности
         calc_harvest_ratio()
         # расчет урожаю по окончанию года
-        value['user_resurce']['food_float'] =\
-            value['farm']['count_int'] * value['farm']['product_per_one_float']\
-            * value['year']['harvest_ratio_float']
+        food = int(value['farm']['count_int'] * value['farm']['product_per_one_float']\
+            * value['year']['harvest_ratio_float'])
+        value['user_resurce']['food_int'] +=food
+            
         # расчет цены за еденицу еды
         calc_year_price_food_float()
+        # начисления налогов
+        #market taxes
+        profit_taxes = (value['market']['product_per_one_float']*value['market']['count_int'])*value['user_resurce']['taxes']
+        # прибыль с замков, 1 замок дает 500 золота в конце года
+        profit_taxes += 500*value['castl']['count_int']
+        # запись прибыли 
+        add_gold(profit_taxes)
+        
+        # расчет прироста населения
+        villager = int(value['user_resurce']['villager_int'] * 0.1)
+        value['user_resurce']['villager_int']+=villager
+        # увеличение календарного года 
+        value['year']['calendar_year_int']+=1
+        new_year = value['year']['calendar_year_int']
+        
+        # печать годовых итогов
+        print('===================================')
+        print(f'Начинается {new_year} год.')
+        print(f'Выполучили: {profit_taxes} золота в виде налогов')
+        print(f'Выполучили: {food} едениц еды')
+        print(f'Выполучили: {food} едениц еды')
+        print(f'Прирост населения в этом году: {villager} человек')
+        print('===================================')
+        
 
     
 # =======================
@@ -332,8 +289,11 @@ def print_build_menu():
 
 
 def main_menu_next_year():
-        print('Функция окончания года еще не реализована')
-        choice = input_validate('num')
+        input('Для расчета прибыли за год нажмите Enter...')
+        calc_end_year()
+        print()
+        input('Пропустить итоги и вернуться в меню Enter...')
+        choice = '0'#возврат в меню
         exec_menu(choice)
         return
 
